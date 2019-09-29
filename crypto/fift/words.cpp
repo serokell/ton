@@ -768,9 +768,7 @@ void interpret_bytes_hash(vm::Stack& stack) {
   std::string str = stack.pop_bytes();
   unsigned char buffer[32];
   digest::hash_str<digest::SHA256>(buffer, str.c_str(), str.size());
-  td::RefInt256 x{true};
-  x.write().import_bytes(buffer, 32, false);
-  stack.push_int(std::move(x));
+  stack.push_bytes(std::string{(char*)buffer, 32});
 }
 
 void interpret_empty(vm::Stack& stack) {
@@ -894,9 +892,7 @@ void interpret_builder_remaining_bitrefs(vm::Stack& stack, int mode) {
 
 void interpret_cell_hash(vm::Stack& stack) {
   auto cell = stack.pop_cell();
-  td::RefInt256 hash{true};
-  hash.write().import_bytes(cell->get_hash().as_slice().ubegin(), 32, false);
-  stack.push_int(std::move(hash));
+  stack.push_bytes(std::string{cell->get_hash().as_slice().begin(), 32});
 }
 
 void interpret_store_ref(vm::Stack& stack) {
